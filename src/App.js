@@ -5,6 +5,10 @@ import { Button } from 'baseui/button';
 import abi from './metadata.json'
 import { HeadingXLarge } from 'baseui/typography'
 import { Block } from 'baseui/block'
+import { Input } from 'baseui/input'
+import { HeadingMedium } from 'baseui/typography'
+
+import { useState } from 'react'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -26,72 +30,89 @@ const loadContract = async () => {
   return contract
 }
 
-const getMyVote = async () => {
-  const contract = await loadContract()
-  const alicePair = keyring.createFromUri("//Alice");
 
-  const value = 0;
-  const gasLimit = 1000000000000;
-  const { output } = await contract.query.getMyVote(
-    alicePair.address,
-    { value, gasLimit }
-  );
-  console.log(output.toHuman())
-}
 
-const getTotalVotes = async () => {
-  const contract = await loadContract()
-  const alicePair = keyring.createFromUri("//Alice");
+export default function App() {
+  const [totalVotes, setTotalVotes] = useState('')
+  const [myVotes, setMyVotes] = useState('')
 
-  const value = 0;
-  const gasLimit = 1000000000000;
-  const { output } = await contract.query.getTotalVotes(
-    alicePair.address,
-    { value, gasLimit }
-  );
-  console.log(output.toHuman())
-}
+  const getMyVote = async () => {
+    const contract = await loadContract()
+    const alicePair = keyring.createFromUri("//Alice");
 
-const incrementMyVote = async () => {
-  const contract = await loadContract()
-  const alicePair = keyring.createFromUri("//Alice");
-  try {
-    await contract.tx
-      .incrementMyVote({})
-      .signAndSend(alicePair, (status) => {
-        if (status.isCompleted) {
-          toast.success("Increment transaction completed!");
-        }
-      })
-  } catch (err) {
-    console.log(err)
+    const value = 0;
+    const gasLimit = 1000000000000;
+    const { output } = await contract.query.getMyVote(
+      alicePair.address,
+      { value, gasLimit }
+    );
+    return output.toHuman()
   }
-}
 
-const decrementMyVote = async () => {
-  const contract = await loadContract()
-  const alicePair = keyring.createFromUri("//Alice");
-  try {
-    await contract.tx
-      .decrementMyVote({})
-      .signAndSend(alicePair, (status) => {
-        if (status.isCompleted) {
-          toast.success("Decrement transaction completed!");
-        }
-      })
-  } catch (err) {
-    console.log(err)
+  const getTotalVotes = async () => {
+    const contract = await loadContract()
+    const alicePair = keyring.createFromUri("//Alice");
+
+    const value = 0;
+    const gasLimit = 1000000000000;
+    const { output } = await contract.query.getTotalVotes(
+      alicePair.address,
+      { value, gasLimit }
+    );
+    return output.toHuman()
   }
-}
 
-export default function Hello() {
+  const incrementMyVote = async () => {
+    const contract = await loadContract()
+    const alicePair = keyring.createFromUri("//Alice");
+    try {
+      await contract.tx
+        .incrementMyVote({})
+        .signAndSend(alicePair, async (status) => {
+          if (status.isCompleted) {
+            const myVotes = await getMyVote()
+            setMyVotes(myVotes)
+
+            const totalVotes = await getTotalVotes()
+            setTotalVotes(totalVotes)
+
+            toast.success("Increment transaction completed!");
+          }
+        })
+    } catch (err) {
+      console.log(err)
+      toast.error("Increment transaction failed!");
+    }
+  }
+
+  const decrementMyVote = async () => {
+    const contract = await loadContract()
+    const alicePair = keyring.createFromUri("//Alice");
+    try {
+      await contract.tx
+        .decrementMyVote({})
+        .signAndSend(alicePair, async (status) => {
+          if (status.isCompleted) {
+            const myVotes = await getMyVote()
+            setMyVotes(myVotes)
+
+            const totalVotes = await getTotalVotes()
+            setTotalVotes(totalVotes)
+
+            toast.success("Decrement transaction completed!");
+          }
+        })
+    } catch (err) {
+      console.log(err)
+      toast.error("Decrement transaction failed!");
+    }
+  }
+
   return (
     <StyletronProvider value={engine}>
       <BaseProvider theme={LightTheme}>
         <Block width="100%" maxWidth="768px" margin="0 auto" padding="0 16px 24px">
-
           <title>Voter contract ui</title>
-
           <Block
             as="header"
             height="120px"
@@ -105,15 +126,44 @@ export default function Hello() {
           </Block>
 
           <main>
-            <Button onClick={() => getMyVote()}>Get my vote</Button>
-            <Button onClick={() => getTotalVotes()}>Get total votes</Button>
-            <Button onClick={() => incrementMyVote()}>Increment my vote</Button>
-            <Button onClick={() => decrementMyVote()}>Decrement my vote</Button>
+            <HeadingMedium as="h1">
+              My votes
+            </HeadingMedium>
+            <Block display="flex">
+              <Button onClick={() => incrementMyVote()}>
+                Increase
+              </Button>
+              <Input
+                value={'My total votes:' + myVotes}
+                disabled={true}
+              />
+              <Button onClick={() => decrementMyVote()}>
+                Decrease
+              </Button>
+            </Block>
+
+            <HeadingMedium as="h1">
+              Total amount of votes present in smart contract
+            </HeadingMedium>
+            <Block display="flex">
+              <Input
+                overrides={{
+                  Root: {
+                    style: ({ $theme }) => ({
+                      flex: 1,
+                      marginRight: $theme.sizing.scale400,
+                    }),
+                  },
+                }}
+                value={'Votes present in smart contract:' + totalVotes}
+                disabled={true}
+              />
+            </Block>
           </main>
 
           <ToastContainer
             position="top-right"
-            autoClose={5000}
+            autoClose={3000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
@@ -122,7 +172,6 @@ export default function Hello() {
             draggable
             pauseOnHover
           />
-          {/* Same as */}
           <ToastContainer />
         </Block>
       </BaseProvider>
