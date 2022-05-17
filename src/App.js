@@ -8,7 +8,7 @@ import { Block } from 'baseui/block'
 import { Input } from 'baseui/input'
 import { HeadingMedium } from 'baseui/typography'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -32,9 +32,25 @@ const loadContract = async () => {
 
 
 
+
+
 export default function App() {
   const [totalVotes, setTotalVotes] = useState('')
   const [myVotes, setMyVotes] = useState('')
+
+  useEffect(() => {
+
+    (async () => {
+      const myVotes = await getMyVote()
+      setMyVotes(myVotes);
+    })();
+
+    (async () => {
+      const totalVotes = await getTotalVotes()
+      setTotalVotes(totalVotes);
+    })();
+
+  }, []);
 
   const getMyVote = async () => {
     const contract = await loadContract()
@@ -163,14 +179,11 @@ export default function App() {
 
           <ToastContainer
             position="top-right"
-            autoClose={3000}
+            autoClose={1000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
             rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
           />
           <ToastContainer />
         </Block>
