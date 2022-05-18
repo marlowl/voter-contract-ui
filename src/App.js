@@ -8,9 +8,7 @@ import { Block } from 'baseui/block'
 import { Input } from 'baseui/input'
 import { HeadingMedium } from 'baseui/typography'
 import { Select } from "baseui/select";
-
 import { useState, useEffect } from 'react'
-
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -18,6 +16,11 @@ const { ApiPromise, WsProvider } = require("@polkadot/api");
 const { ContractPromise } = require("@polkadot/api-contract");
 const { keyring } = require("@polkadot/ui-keyring");
 const engine = new Styletron();
+const toasterOptions = {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+}
 
 keyring.loadAll({ ss58Format: 42, type: "sr25519" });
 
@@ -32,10 +35,6 @@ const loadContract = async () => {
 }
 
 export default function App() {
-  const [totalVotes, setTotalVotes] = useState('')
-  const [myVotes, setMyVotes] = useState('')
-  const [account, setAccount] = useState([{label: "Alice", id: "//Alice"}]);
-
   useEffect(() => {
 
     (async () => {
@@ -48,16 +47,19 @@ export default function App() {
       setTotalVotes(totalVotes);
     })();
 
-  },);
+  });
+
+  const [totalVotes, setTotalVotes] = useState('')
+  const [myVotes, setMyVotes] = useState('')
+  const [account, setAccount] = useState([{ label: "Alice", id: "//Alice" }]);
+  const value = 0;
+  const gasLimit = 1000000000000;
 
   const getMyVote = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri(account[0].id);
-
-    const value = 0;
-    const gasLimit = 1000000000000;
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     const { output } = await contract.query.getMyVote(
-      alicePair.address,
+      keyRingAccount.address,
       { value, gasLimit }
     );
     return output.toHuman()
@@ -65,12 +67,9 @@ export default function App() {
 
   const getTotalVotes = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri(account[0].id);
-
-    const value = 0;
-    const gasLimit = 1000000000000;
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     const { output } = await contract.query.getTotalVotes(
-      alicePair.address,
+      keyRingAccount.address,
       { value, gasLimit }
     );
     return output.toHuman()
@@ -78,11 +77,11 @@ export default function App() {
 
   const incrementMyVote = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri(account[0].id);
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .incrementMyVote({})
-        .signAndSend(alicePair, async (status) => {
+        .signAndSend(keyRingAccount, async (status) => {
           if (status.isCompleted) {
             const myVotes = await getMyVote()
             setMyVotes(myVotes)
@@ -90,29 +89,21 @@ export default function App() {
             const totalVotes = await getTotalVotes()
             setTotalVotes(totalVotes)
 
-            toast.success("Increment transaction for "+ account[0].label +" completed!", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-            });
+            toast.success("Increment transaction for " + account[0].label + " completed!", toasterOptions)
           }
         })
     } catch (err) {
-      toast.error("Increment transaction for "+ account[0].label +" failed!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+      toast.error("Increment transaction for " + account[0].label + " failed!", toasterOptions);
     }
   }
 
   const decrementMyVote = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri(account[0].id);
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .decrementMyVote({})
-        .signAndSend(alicePair, async (status) => {
+        .signAndSend(keyRingAccount, async (status) => {
           if (status.isCompleted) {
             const myVotes = await getMyVote()
             setMyVotes(myVotes)
@@ -120,20 +111,12 @@ export default function App() {
             const totalVotes = await getTotalVotes()
             setTotalVotes(totalVotes)
 
-            toast.success("Decrement transaction for "+ account[0].label +" completed!", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-            });
+            toast.success("Decrement transaction for " + account[0].label + " completed!", toasterOptions);
           }
         })
     } catch (err) {
       console.log(err)
-      toast.error("Decrement transaction for "+ account[0].label +" failed!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-      });
+      toast.error("Decrement transaction for " + account[0].label + " failed!", toasterOptions);
     }
   }
 
@@ -154,9 +137,10 @@ export default function App() {
           </Block>
 
           <HeadingMedium as="h1">
-              Account Selector
-            </HeadingMedium>
+            Account Selector
+          </HeadingMedium>
           <Select
+            clearable={false}
             options={[
               { label: "Alice", id: "//Alice" },
               { label: "Bob", id: "//Bob" },
@@ -170,51 +154,43 @@ export default function App() {
             onChange={params => setAccount(params.value)}
           />
 
-          <main>
-            <HeadingMedium as="h1">
-              My votes
-            </HeadingMedium>
-            <Block display="flex">
-              <Button onClick={() => incrementMyVote()}>
-                Increase
-              </Button>
-              <Input
-                value={'My total votes:' + myVotes}
-                disabled={true}
-              />
-              <Button onClick={() => decrementMyVote()}>
-                Decrease
-              </Button>
-            </Block>
+          <HeadingMedium as="h1">
+            My votes
+          </HeadingMedium>
+          <Block display="flex">
+            <Button onClick={() => incrementMyVote()}>
+              Increase
+            </Button>
+            <Input
+              value={'My total votes:' + myVotes}
+              disabled={true}
+            />
+            <Button onClick={() => decrementMyVote()}>
+              Decrease
+            </Button>
+          </Block>
 
-            <HeadingMedium as="h1">
-              Total amount of votes present in smart contract
-            </HeadingMedium>
-            <Block display="flex">
-              <Input
-                overrides={{
-                  Root: {
-                    style: ({ $theme }) => ({
-                      flex: 1,
-                      marginRight: $theme.sizing.scale400,
-                    }),
-                  },
-                }}
-                value={'Votes present in smart contract:' + totalVotes}
-                disabled={true}
-              />
-            </Block>
-          </main>
+          <HeadingMedium as="h1">
+            Total amount of votes present in smart contract
+          </HeadingMedium>
+          <Block display="flex">
+            <Input
+              overrides={{
+                Root: {
+                  style: ({ $theme }) => ({
+                    flex: 1,
+                    marginRight: $theme.sizing.scale400,
+                  }),
+                },
+              }}
+              value={'Votes present in smart contract:' + totalVotes}
+              disabled={true}
+            />
+          </Block>
 
-          <ToastContainer
-            position="top-right"
-            autoClose={1000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-          />
           <ToastContainer />
+          <ToastContainer />
+
         </Block>
       </BaseProvider>
     </StyletronProvider>
