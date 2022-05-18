@@ -7,6 +7,7 @@ import { HeadingXLarge } from 'baseui/typography'
 import { Block } from 'baseui/block'
 import { Input } from 'baseui/input'
 import { HeadingMedium } from 'baseui/typography'
+import { Select } from "baseui/select";
 
 import { useState, useEffect } from 'react'
 
@@ -33,6 +34,7 @@ const loadContract = async () => {
 export default function App() {
   const [totalVotes, setTotalVotes] = useState('')
   const [myVotes, setMyVotes] = useState('')
+  const [account, setAccount] = useState([{label: "Alice", id: "//Alice"}]);
 
   useEffect(() => {
 
@@ -46,11 +48,11 @@ export default function App() {
       setTotalVotes(totalVotes);
     })();
 
-  }, []);
+  },);
 
   const getMyVote = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri("//Alice");
+    const alicePair = keyring.createFromUri(account[0].id);
 
     const value = 0;
     const gasLimit = 1000000000000;
@@ -63,7 +65,7 @@ export default function App() {
 
   const getTotalVotes = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri("//Alice");
+    const alicePair = keyring.createFromUri(account[0].id);
 
     const value = 0;
     const gasLimit = 1000000000000;
@@ -76,7 +78,7 @@ export default function App() {
 
   const incrementMyVote = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri("//Alice");
+    const alicePair = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .incrementMyVote({})
@@ -88,7 +90,7 @@ export default function App() {
             const totalVotes = await getTotalVotes()
             setTotalVotes(totalVotes)
 
-            toast.success("Increment transaction completed!", {
+            toast.success("Increment transaction for "+ account[0].label +" completed!", {
               position: "top-right",
               autoClose: 3000,
               hideProgressBar: false,
@@ -96,8 +98,7 @@ export default function App() {
           }
         })
     } catch (err) {
-      console.log(err)
-      toast.error("Increment transaction failed!",{
+      toast.error("Increment transaction for "+ account[0].label +" failed!", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -107,7 +108,7 @@ export default function App() {
 
   const decrementMyVote = async () => {
     const contract = await loadContract()
-    const alicePair = keyring.createFromUri("//Alice");
+    const alicePair = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .decrementMyVote({})
@@ -119,7 +120,7 @@ export default function App() {
             const totalVotes = await getTotalVotes()
             setTotalVotes(totalVotes)
 
-            toast.success("Decrement transaction completed!", {
+            toast.success("Decrement transaction for "+ account[0].label +" completed!", {
               position: "top-right",
               autoClose: 3000,
               hideProgressBar: false,
@@ -128,7 +129,7 @@ export default function App() {
         })
     } catch (err) {
       console.log(err)
-      toast.error("Decrement transaction failed!",{
+      toast.error("Decrement transaction for "+ account[0].label +" failed!", {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -140,7 +141,6 @@ export default function App() {
     <StyletronProvider value={engine}>
       <BaseProvider theme={LightTheme}>
         <Block width="100%" maxWidth="768px" margin="0 auto" padding="0 16px 24px">
-          <title>Voter contract ui</title>
           <Block
             as="header"
             height="120px"
@@ -152,6 +152,23 @@ export default function App() {
               <HeadingXLarge as="div">Voter contract ui</HeadingXLarge>
             </Block>
           </Block>
+
+          <HeadingMedium as="h1">
+              Account Selector
+            </HeadingMedium>
+          <Select
+            options={[
+              { label: "Alice", id: "//Alice" },
+              { label: "Bob", id: "//Bob" },
+              { label: "Charlie", id: "//Charlie" },
+              { label: "Dave", id: "//Dave" },
+              { label: "Eve", id: "//Eve" },
+              { label: "Ferdie", id: "//Ferdie" }
+            ]}
+            value={account}
+            placeholder="Select account"
+            onChange={params => setAccount(params.value)}
+          />
 
           <main>
             <HeadingMedium as="h1">
