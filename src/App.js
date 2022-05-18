@@ -38,13 +38,10 @@ export default function App() {
   useEffect(() => {
 
     (async () => {
-      const myVotes = await getMyVote()
-      setMyVotes(myVotes);
-    })();
-
-    (async () => {
-      const totalVotes = await getTotalVotes()
-      setTotalVotes(totalVotes);
+      await getMyVote()
+      if (myVotes) {
+        await getTotalVotes()
+      }
     })();
 
   });
@@ -55,6 +52,7 @@ export default function App() {
   const value = 0;
   const gasLimit = 1000000000000;
 
+
   const getMyVote = async () => {
     const contract = await loadContract()
     const keyRingAccount = keyring.createFromUri(account[0].id);
@@ -62,7 +60,13 @@ export default function App() {
       keyRingAccount.address,
       { value, gasLimit }
     );
-    return output.toHuman()
+
+    const myVotes = output?.toString()
+    if (myVotes) {
+      setMyVotes(myVotes);
+    } else {
+      toast.error("Contract not loaded correctly!")
+    }
   }
 
   const getTotalVotes = async () => {
