@@ -24,15 +24,11 @@ const loadContract = async () => {
   const provider = new WsProvider("ws://127.0.0.1:9944");
   const api = await ApiPromise.create({ provider });
 
-  const contractAddress = "5DszehVJ6pS7QpAwDoiWNFiQgvDxFJHrPnEWm5dGRkpwpVXh";
+  const contractAddress = "5EBgjzhWLP7JAHuaH84XbQuXpBDzn7TAF9zXA8j4TejEDqsx";
   const contract = new ContractPromise(api, abi, contractAddress);
 
   return contract
 }
-
-
-
-
 
 export default function App() {
   const [totalVotes, setTotalVotes] = useState('')
@@ -92,12 +88,20 @@ export default function App() {
             const totalVotes = await getTotalVotes()
             setTotalVotes(totalVotes)
 
-            toast.success("Increment transaction completed!");
+            toast.success("Increment transaction completed!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+            });
           }
         })
     } catch (err) {
       console.log(err)
-      toast.error("Increment transaction failed!");
+      toast.error("Increment transaction failed!",{
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
     }
   }
 
@@ -115,12 +119,20 @@ export default function App() {
             const totalVotes = await getTotalVotes()
             setTotalVotes(totalVotes)
 
-            toast.success("Decrement transaction completed!");
+            toast.success("Decrement transaction completed!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+            });
           }
         })
     } catch (err) {
       console.log(err)
-      toast.error("Decrement transaction failed!");
+      toast.error("Decrement transaction failed!",{
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+      });
     }
   }
 
