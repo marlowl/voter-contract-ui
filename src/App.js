@@ -61,7 +61,6 @@ export default function App() {
 
     const myVotes = output?.toString();
     if (myVotes) {
-      console.log(myVotes);
       setMyVotes(myVotes);
     } else {
       toast.error('Contract not loaded correctly!');
@@ -101,6 +100,7 @@ export default function App() {
         });
     } catch (err) {
       toast.error(`Increment transaction for ${account[0].label} failed!`, toasterOptions);
+      console.log(err);
     }
   };
 
@@ -122,8 +122,8 @@ export default function App() {
           }
         });
     } catch (err) {
-      console.log(err);
       toast.error(`Decrement transaction for ${account[0].label} failed!`, toasterOptions);
+      console.log(err);
     }
   };
 
