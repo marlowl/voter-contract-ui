@@ -2,127 +2,130 @@ import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
 import { LightTheme, BaseProvider } from 'baseui';
 import { Button } from 'baseui/button';
-import abi from './metadata.json'
-import { HeadingXLarge } from 'baseui/typography'
-import { Block } from 'baseui/block'
-import { Input } from 'baseui/input'
-import { HeadingMedium } from 'baseui/typography'
-import { Select } from "baseui/select";
-import { useState, useEffect } from 'react'
+import abi from './metadata.json';
+import { HeadingXLarge } from 'baseui/typography';
+import { Block } from 'baseui/block';
+import { Input } from 'baseui/input';
+import { HeadingMedium } from 'baseui/typography';
+import { Select } from 'baseui/select';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const { ApiPromise, WsProvider } = require("@polkadot/api");
-const { ContractPromise } = require("@polkadot/api-contract");
-const { keyring } = require("@polkadot/ui-keyring");
+const { ApiPromise, WsProvider } = require('@polkadot/api');
+const { ContractPromise } = require('@polkadot/api-contract');
+const { keyring } = require('@polkadot/ui-keyring');
 const engine = new Styletron();
 const toasterOptions = {
-  position: "top-right",
+  position: 'top-right',
   autoClose: 3000,
   hideProgressBar: false,
-}
+};
 
-keyring.loadAll({ ss58Format: 42, type: "sr25519" });
+keyring.loadAll({ ss58Format: 42, type: 'sr25519' });
 
 const loadContract = async () => {
-  const provider = new WsProvider("ws://127.0.0.1:9944");
+  const provider = new WsProvider('ws://127.0.0.1:9944');
   const api = await ApiPromise.create({ provider });
 
-  const contractAddress = "5EBgjzhWLP7JAHuaH84XbQuXpBDzn7TAF9zXA8j4TejEDqsx";
+  const contractAddress = '5DAQvhavyjR3eyBuKey7Ggw2TMtGgJSEJSGY9QqWeV3m5joC';
   const contract = new ContractPromise(api, abi, contractAddress);
 
-  return contract
-}
+  return contract;
+};
 
 export default function App() {
   useEffect(() => {
-
     (async () => {
-      await getMyVote()
-      if (myVotes) {
-        await getTotalVotes()
-      }
+      await getMyVote();
     })();
 
+    (async () => {
+      await getTotalVotes();
+    })();
   });
 
-  const [totalVotes, setTotalVotes] = useState('')
-  const [myVotes, setMyVotes] = useState('')
-  const [account, setAccount] = useState([{ label: "Alice", id: "//Alice" }]);
+  const [totalVotes, setTotalVotes] = useState('');
+  const [myVotes, setMyVotes] = useState('');
+  const [account, setAccount] = useState([{ label: 'Alice', id: '//Alice' }]);
   const value = 0;
   const gasLimit = 1000000000000;
 
-
   const getMyVote = async () => {
-    const contract = await loadContract()
+    const contract = await loadContract();
     const keyRingAccount = keyring.createFromUri(account[0].id);
     const { output } = await contract.query.getMyVote(
       keyRingAccount.address,
-      { value, gasLimit }
+      { value, gasLimit },
     );
 
-    const myVotes = output?.toString()
+    const myVotes = output?.toString();
     if (myVotes) {
+      console.log(myVotes);
       setMyVotes(myVotes);
     } else {
-      toast.error("Contract not loaded correctly!")
+      toast.error('Contract not loaded correctly!');
     }
-  }
+  };
 
   const getTotalVotes = async () => {
-    const contract = await loadContract()
+    const contract = await loadContract();
     const keyRingAccount = keyring.createFromUri(account[0].id);
     const { output } = await contract.query.getTotalVotes(
       keyRingAccount.address,
-      { value, gasLimit }
+      { value, gasLimit },
     );
-    return output.toHuman()
-  }
+
+    const totalVoutes = output?.toString();
+    if (totalVoutes) {
+      setTotalVotes(totalVoutes);
+    }
+  };
 
   const incrementMyVote = async () => {
-    const contract = await loadContract()
+    const contract = await loadContract();
     const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .incrementMyVote({})
         .signAndSend(keyRingAccount, async (status) => {
           if (status.isCompleted) {
-            const myVotes = await getMyVote()
-            setMyVotes(myVotes)
+            const myVotes = await getMyVote();
+            setMyVotes(myVotes);
 
-            const totalVotes = await getTotalVotes()
-            setTotalVotes(totalVotes)
+            const totalVotes = await getTotalVotes();
+            setTotalVotes(totalVotes);
 
-            toast.success("Increment transaction for " + account[0].label + " completed!", toasterOptions)
+            toast.success(`Increment transaction for ${account[0].label} completed!`, toasterOptions);
           }
-        })
+        });
     } catch (err) {
-      toast.error("Increment transaction for " + account[0].label + " failed!", toasterOptions);
+      toast.error(`Increment transaction for ${account[0].label} failed!`, toasterOptions);
     }
-  }
+  };
 
   const decrementMyVote = async () => {
-    const contract = await loadContract()
+    const contract = await loadContract();
     const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .decrementMyVote({})
         .signAndSend(keyRingAccount, async (status) => {
           if (status.isCompleted) {
-            const myVotes = await getMyVote()
-            setMyVotes(myVotes)
+            const myVotes = await getMyVote();
+            setMyVotes(myVotes);
 
-            const totalVotes = await getTotalVotes()
-            setTotalVotes(totalVotes)
+            const totalVotes = await getTotalVotes();
+            setTotalVotes(totalVotes);
 
-            toast.success("Decrement transaction for " + account[0].label + " completed!", toasterOptions);
+            toast.success(`Decrement transaction for ${account[0].label} completed!`, toasterOptions);
           }
-        })
+        });
     } catch (err) {
-      console.log(err)
-      toast.error("Decrement transaction for " + account[0].label + " failed!", toasterOptions);
+      console.log(err);
+      toast.error(`Decrement transaction for ${account[0].label} failed!`, toasterOptions);
     }
-  }
+  };
 
   return (
     <StyletronProvider value={engine}>
@@ -146,16 +149,16 @@ export default function App() {
           <Select
             clearable={false}
             options={[
-              { label: "Alice", id: "//Alice" },
-              { label: "Bob", id: "//Bob" },
-              { label: "Charlie", id: "//Charlie" },
-              { label: "Dave", id: "//Dave" },
-              { label: "Eve", id: "//Eve" },
-              { label: "Ferdie", id: "//Ferdie" }
+              { label: 'Alice', id: '//Alice' },
+              { label: 'Bob', id: '//Bob' },
+              { label: 'Charlie', id: '//Charlie' },
+              { label: 'Dave', id: '//Dave' },
+              { label: 'Eve', id: '//Eve' },
+              { label: 'Ferdie', id: '//Ferdie' },
             ]}
             value={account}
             placeholder="Select account"
-            onChange={params => setAccount(params.value)}
+            onChange={(params) => setAccount(params.value)}
           />
 
           <HeadingMedium as="h1">
@@ -166,8 +169,8 @@ export default function App() {
               Increase
             </Button>
             <Input
-              value={'My total votes:' + myVotes}
-              disabled={true}
+              value={`My total votes: ${(myVotes) || ''}`}
+              disabled
             />
             <Button onClick={() => decrementMyVote()}>
               Decrease
@@ -187,8 +190,8 @@ export default function App() {
                   }),
                 },
               }}
-              value={'Votes present in smart contract:' + totalVotes}
-              disabled={true}
+              value={`Votes present in smart contract: ${(totalVotes) || ''}`}
+              disabled
             />
           </Block>
 
