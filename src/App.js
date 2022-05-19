@@ -62,10 +62,11 @@ export default function App() {
 
   const value = 0;
   const gasLimit = 1000000000000;
-  const keyRingAccount = keyring.createFromUri(account[0].id);
+  
 
   const incrementMyVote = async () => {
     const contract = await loadContract();
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .incrementMyVote({})
@@ -88,6 +89,7 @@ export default function App() {
 
   const decrementMyVote = async () => {
     const contract = await loadContract();
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .decrementMyVote({})
@@ -110,6 +112,7 @@ export default function App() {
 
   const getMyVote = async () => {
     const contract = await loadContract();
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     const { output } = await contract.query.getMyVote(
       keyRingAccount.address,
       { value, gasLimit },
@@ -125,6 +128,7 @@ export default function App() {
 
   const getTotalVotes = async () => {
     const contract = await loadContract();
+    const keyRingAccount = keyring.createFromUri(account[0].id);
     const { output } = await contract.query.getTotalVotes(
       keyRingAccount.address,
       { value, gasLimit },
