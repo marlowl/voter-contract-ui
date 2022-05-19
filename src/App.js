@@ -42,6 +42,7 @@ const loadContract = async () => {
   const provider = new WsProvider(webSocketEndpoint);
   const api = await ApiPromise.create({ provider });
 
+  // fill in your contract address
   const contractAddress = '';
   const contract = new ContractPromise(api, abi, contractAddress);
 
@@ -195,14 +196,6 @@ export default function App() {
           </HeadingMedium>
           <Block display="flex">
             <Input
-              overrides={{
-                Root: {
-                  style: ({ $theme }) => ({
-                    flex: 1,
-                    marginRight: $theme.sizing.scale400,
-                  }),
-                },
-              }}
               value={`Votes present in smart contract: ${(totalVotes) || ''}`}
               disabled
             />
