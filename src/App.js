@@ -59,42 +59,13 @@ export default function App() {
   const [totalVotes, setTotalVotes] = useState('');
   const [myVotes, setMyVotes] = useState('');
   const [account, setAccount] = useState([{ label: 'Alice', id: '//Alice' }]);
+
   const value = 0;
   const gasLimit = 1000000000000;
-
-  const getMyVote = async () => {
-    const contract = await loadContract();
-    const keyRingAccount = keyring.createFromUri(account[0].id);
-    const { output } = await contract.query.getMyVote(
-      keyRingAccount.address,
-      { value, gasLimit },
-    );
-
-    const myVotes = output?.toString();
-    if (myVotes) {
-      setMyVotes(myVotes);
-    } else {
-      toast.error('Contract address not found!');
-    }
-  };
-
-  const getTotalVotes = async () => {
-    const contract = await loadContract();
-    const keyRingAccount = keyring.createFromUri(account[0].id);
-    const { output } = await contract.query.getTotalVotes(
-      keyRingAccount.address,
-      { value, gasLimit },
-    );
-
-    const totalVoutes = output?.toString();
-    if (totalVoutes) {
-      setTotalVotes(totalVoutes);
-    }
-  };
+  const keyRingAccount = keyring.createFromUri(account[0].id);
 
   const incrementMyVote = async () => {
     const contract = await loadContract();
-    const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .incrementMyVote({})
@@ -117,7 +88,6 @@ export default function App() {
 
   const decrementMyVote = async () => {
     const contract = await loadContract();
-    const keyRingAccount = keyring.createFromUri(account[0].id);
     try {
       await contract.tx
         .decrementMyVote({})
@@ -135,6 +105,34 @@ export default function App() {
     } catch (err) {
       toast.error(`Decrement transaction for ${account[0].label} failed!`, toasterOptions);
       console.log(err);
+    }
+  };
+
+  const getMyVote = async () => {
+    const contract = await loadContract();
+    const { output } = await contract.query.getMyVote(
+      keyRingAccount.address,
+      { value, gasLimit },
+    );
+
+    const myVotes = output?.toString();
+    if (myVotes) {
+      setMyVotes(myVotes);
+    } else {
+      toast.error('Contract address not found!');
+    }
+  };
+
+  const getTotalVotes = async () => {
+    const contract = await loadContract();
+    const { output } = await contract.query.getTotalVotes(
+      keyRingAccount.address,
+      { value, gasLimit },
+    );
+
+    const totalVoutes = output?.toString();
+    if (totalVoutes) {
+      setTotalVotes(totalVoutes);
     }
   };
 
