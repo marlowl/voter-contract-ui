@@ -1,70 +1,30 @@
-# Getting Started with Create React App
+## Voter contract UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Introduction
+Starter dApp for an account based voting mechanism. The template can be a start for developers who want to try out an ink! smart contract in combination with a simple user interface.
 
-## Available Scripts
+### Demo video
 
-In the project directory, you can run:
 
-### `npm start`
+### Project requirements
+-  Follow the Substrate [getting started](https://docs.substrate.io/v3/getting-started/installation/) tutorial to prepare your envrionment for Substrate development
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Follow the steps provided in the Substrate [node template](https://github.com/substrate-developer-hub/substrate-node-template#substrate-node-template) repository to setup a local Substrate node
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Project Setup 
+- Run the following commands
+```bash
+git clone https://github.com/marlowl/ink-voter-contract
+cd ink-voter-contract
+cargo +nightly contract build
+```
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- It builds a `./target/ink` folder. This folder contains the `voter_sample.contract` file
+- Go to Parity's [contracts ui](https://paritytech.github.io/contracts-ui/#/add-contract)
+-  Make sure your local Substrate node is running
+- Upload the `voter_sample.contract` file
+- Visit the [PolkadotJs](https://polkadot.js.org/apps/#/explorer) explorer
+- Target your local node as network
+- Look for the `contract.Instantiated` event
+- Copy the contract address and paste it [here](https://github.com/marlowl/voter-contract-ui/blob/main/src/App.js#L46)
+- Run `yarn start` to play with the Voter contract UI! :smile:
