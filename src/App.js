@@ -16,13 +16,13 @@ const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { ContractPromise } = require('@polkadot/api-contract');
 const { keyring } = require('@polkadot/ui-keyring');
 
-const webSocketEndpoint = "ws://127.0.0.1:9944"
+const webSocketEndpoint = 'ws://127.0.0.1:9944';
 const socket = new WebSocket(webSocketEndpoint);
-socket.onopen = function() {
-  toast.success("Node connected!")
+socket.onopen = function () {
+  toast.success('Node connected!', toasterOptions);
 };
-socket.onerror = function() {
-  toast.error("Node not connected!")
+socket.onerror = function () {
+  toast.error('Node not connected!', toasterOptions);
 };
 
 const engine = new Styletron();
@@ -30,8 +30,11 @@ const toasterOptions = {
   position: 'top-right',
   autoClose: 3000,
   hideProgressBar: false,
+  closeOnClick: false,
+  pauseOnHover: false,
+  draggable: false,
+  progress: undefined,
 };
-
 
 keyring.loadAll({ ss58Format: 42, type: 'sr25519' });
 
@@ -39,7 +42,7 @@ const loadContract = async () => {
   const provider = new WsProvider(webSocketEndpoint);
   const api = await ApiPromise.create({ provider });
 
-  const contractAddress = '5G3ey1kP8ixUpFSaokeLaws6F9vW2S4pUf51K6P54B2Sw37B';
+  const contractAddress = '';
   const contract = new ContractPromise(api, abi, contractAddress);
 
   return contract;
@@ -206,8 +209,17 @@ export default function App() {
             />
           </Block>
 
-          <ToastContainer />
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick={false}
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable={false}
+            pauseOnHover={false}
+          />
 
         </Block>
       </BaseProvider>
