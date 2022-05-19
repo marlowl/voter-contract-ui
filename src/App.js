@@ -42,7 +42,7 @@ const loadContract = async () => {
   const provider = new WsProvider(webSocketEndpoint);
   const api = await ApiPromise.create({ provider });
 
-  const contractAddress = '5CmhgSckoMwUroFNunW7gKkL7F2HcDWkRv6GEqfSTPgugAhb';
+  const contractAddress = '';
   const contract = new ContractPromise(api, abi, contractAddress);
 
   return contract;
