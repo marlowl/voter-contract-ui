@@ -6,6 +6,11 @@ Starter dApp for an account based voting mechanism. The template can be a start 
 ### Demo video
 
 
+https://user-images.githubusercontent.com/30845815/169352588-db04d5a8-84fc-4ac5-95e8-5a85a02fe7b4.mp4
+
+
+
+
 ### Project requirements
 -  Follow the Substrate [getting started](https://docs.substrate.io/v3/getting-started/installation/) tutorial to prepare your envrionment for Substrate development
 
