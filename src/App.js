@@ -15,6 +15,16 @@ import 'react-toastify/dist/ReactToastify.css';
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { ContractPromise } = require('@polkadot/api-contract');
 const { keyring } = require('@polkadot/ui-keyring');
+
+const webSocketEndpoint = "ws://127.0.0.1:9944"
+const socket = new WebSocket(webSocketEndpoint);
+socket.onopen = function() {
+  toast.success("Node connected!")
+};
+socket.onerror = function() {
+  toast.error("Node not connected!")
+};
+
 const engine = new Styletron();
 const toasterOptions = {
   position: 'top-right',
@@ -22,13 +32,14 @@ const toasterOptions = {
   hideProgressBar: false,
 };
 
+
 keyring.loadAll({ ss58Format: 42, type: 'sr25519' });
 
 const loadContract = async () => {
-  const provider = new WsProvider('ws://127.0.0.1:9944');
+  const provider = new WsProvider(webSocketEndpoint);
   const api = await ApiPromise.create({ provider });
 
-  const contractAddress = '5DAQvhavyjR3eyBuKey7Ggw2TMtGgJSEJSGY9QqWeV3m5joC';
+  const contractAddress = '5G3ey1kP8ixUpFSaokeLaws6F9vW2S4pUf51K6P54B2Sw37B';
   const contract = new ContractPromise(api, abi, contractAddress);
 
   return contract;
@@ -63,7 +74,7 @@ export default function App() {
     if (myVotes) {
       setMyVotes(myVotes);
     } else {
-      toast.error('Contract not loaded correctly!');
+      toast.error('Contract address not found!');
     }
   };
 
