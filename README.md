@@ -12,7 +12,7 @@ https://user-images.githubusercontent.com/30845815/169352588-db04d5a8-84fc-4ac5-
 ### Project requirements
 -  Follow the Substrate [getting started](https://docs.substrate.io/v3/getting-started/installation/) tutorial to prepare your envrionment for Substrate development
 
-- Follow the steps provided in the Substrate [node template](https://github.com/substrate-developer-hub/substrate-node-template#substrate-node-template) repository to setup a local Substrate node
+- Follow the steps provided in the Substrate [contracts node template](https://github.com/paritytech/substrate-contracts-node) repository to setup a local Substrate node
 
 ### Project setup 
 - Run the following commands
